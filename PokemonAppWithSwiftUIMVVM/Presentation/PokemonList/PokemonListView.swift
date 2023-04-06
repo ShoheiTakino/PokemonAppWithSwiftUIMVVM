@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct PokemonListView: View {
-
-        @StateObject private var viewModel = PokemonDataViewModel()
-
-        var body: some View {
-            NavigationView {
-                List(viewModel.posts) { post in
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(post.title)
-                            .font(.headline)
-                        Text(post.body)
-                            .font(.subheadline)
-                    }
+    
+    @StateObject private var viewModel = PokemonDataViewModel()
+    
+    var body: some View {
+        NavigationView {
+            List(viewModel.posts) { post in
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(post.title)
+                        .font(.headline)
+                    Text(post.body)
+                        .font(.subheadline)
                 }
-                .navigationBarTitle("List")
             }
+            .navigationBarTitle("List")
         }
+    }
 }
 
 struct PokemonListView_Previews: PreviewProvider {

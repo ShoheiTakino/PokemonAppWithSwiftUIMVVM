@@ -11,7 +11,7 @@ import SwiftUI
 struct PokemonAppWithSwiftUIMVVMApp: App {
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            LaunchScreen()
         }
     }
 }

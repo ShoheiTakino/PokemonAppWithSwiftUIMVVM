@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D5A3B2029E4458C00CDCEFA /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5A3B1F29E4458C00CDCEFA /* LaunchScreen.swift */; };
 		5DFBDF7B29DDA520004E0B78 /* PokemonAppWithSwiftUIMVVMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFBDF7A29DDA520004E0B78 /* PokemonAppWithSwiftUIMVVMApp.swift */; };
 		5DFBDF7D29DDA520004E0B78 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFBDF7C29DDA520004E0B78 /* MainTabView.swift */; };
 		5DFBDF7F29DDA522004E0B78 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DFBDF7E29DDA522004E0B78 /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D5A3B1F29E4458C00CDCEFA /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		5DFBDF7729DDA520004E0B78 /* PokemonAppWithSwiftUIMVVM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokemonAppWithSwiftUIMVVM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DFBDF7A29DDA520004E0B78 /* PokemonAppWithSwiftUIMVVMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonAppWithSwiftUIMVVMApp.swift; sourceTree = "<group>"; };
 		5DFBDF7C29DDA520004E0B78 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -85,6 +87,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D5A3B1E29E4456F00CDCEFA /* LounchScreen */ = {
+			isa = PBXGroup;
+			children = (
+				5D5A3B1F29E4458C00CDCEFA /* LaunchScreen.swift */,
+			);
+			path = LounchScreen;
+			sourceTree = "<group>";
+		};
 		5DFBDF6E29DDA520004E0B78 = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +157,7 @@
 		5DFBDFA429DDA5E2004E0B78 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				5D5A3B1E29E4456F00CDCEFA /* LounchScreen */,
 				5DFBDFB229DDA8E0004E0B78 /* PokemonDetail */,
 				5DFBDFB129DDA8CE004E0B78 /* MainTab */,
 				5DFBDFA829DDA75D004E0B78 /* PokemonLazyVGrid */,
@@ -352,6 +363,7 @@
 			files = (
 				5DFBDFBB29DDAB27004E0B78 /* PokemonDataViewModel.swift in Sources */,
 				5DFBDFAE29DDA7C3004E0B78 /* PokemonListView.swift in Sources */,
+				5D5A3B2029E4458C00CDCEFA /* LaunchScreen.swift in Sources */,
 				5DFBDFB629DDA911004E0B78 /* PokemonDetailView.swift in Sources */,
 				5DFBDFBD29DED684004E0B78 /* Post.swift in Sources */,
 				5DFBDFB929DDAABF004E0B78 /* FetchPokemonData.swift in Sources */,

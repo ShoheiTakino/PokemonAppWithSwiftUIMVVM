@@ -31,7 +31,7 @@ struct Pokemon: Decodable, Identifiable {
     }
     
     struct Types: Codable {
-        let type: Type
+        let type: `Type`
     }
 
     struct `Type`: Codable {

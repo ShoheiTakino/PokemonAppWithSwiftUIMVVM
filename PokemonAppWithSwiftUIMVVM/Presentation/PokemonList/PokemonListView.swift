@@ -13,15 +13,16 @@ struct PokemonListView: View {
     
     var body: some View {
         NavigationView {
-            List(viewModel.posts) { post in
+            List(viewModel.pokemonList) { pokemon in
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(post.title)
-                        .font(.headline)
-                    Text(post.body)
-                        .font(.subheadline)
+                    Image(pokemon.sprites.frontImage)
                 }
             }
             .navigationBarTitle("List")
+        }.onAppear {
+            Task {
+                await viewModel.fetchPokemonList()
+            }
         }
     }
 }

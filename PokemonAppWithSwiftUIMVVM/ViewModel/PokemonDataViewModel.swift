@@ -8,8 +8,9 @@
 import SwiftUI
 import Combine
 
-class PokemonDataViewModel: ObservableObject {
+final class PokemonDataViewModel: ObservableObject {
     @Published var posts = [Post]()
+    @Published var pokemonList: [Pokemon] = []
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -31,5 +32,10 @@ class PokemonDataViewModel: ObservableObject {
                 self?.posts = posts
             }
             .store(in: &cancellables)
+    }
+    
+    func fetchPokemonList() async {
+        let pokemonList = await FetchPokemonData.fetchPokemonRequest()
+        self.pokemonList = pokemonList
     }
 }

@@ -20,7 +20,22 @@ struct FetchPokemonData {
             .eraseToAnyPublisher()
     }
     
-    static func fetchPokemonRequest() {
-        
+    static func fetchPokemonRequest() async -> [Pokemon]  {
+        var urlList: [URL] = []
+        var pokemonList: [Pokemon] = []
+        for i in 0..<150 {
+            let url = URL(string: "https://pokeapi.co/api/v2/pokemon/\(i)/")!
+            urlList.append(url)
+        }
+        do {
+            for i in 0..<urlList.count {
+                let (data, _) = try! await URLSession.shared.data(from: urlList[i])
+                let decoder = JSONDecoder()
+                let json = try! decoder.decode(Pokemon.self, from: data)
+                print(#function, json)
+                pokemonList.append(json)
+            }
+            return pokemonList
+        }
     }
 }

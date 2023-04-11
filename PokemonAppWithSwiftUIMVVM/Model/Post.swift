@@ -19,22 +19,22 @@ struct Pokemon: Decodable, Identifiable {
     let id: Int
     let sprites: Images
     let types: [Types]
-}
+    
+    struct Images: Codable {
+        let frontImage: String
+        let shinyImage: String
 
-struct Images: Codable {
-    let frontImage: String
-    let shinyImage: String
-
-    enum CodingKeys: String, CodingKey {
-        case frontImage = "front_default"
-        case shinyImage = "front_shiny"
+        enum CodingKeys: String, CodingKey {
+            case frontImage = "front_default"
+            case shinyImage = "front_shiny"
+        }
     }
-}
+    
+    struct Types: Codable {
+        let type: Type
+    }
 
-struct Types: Codable {
-    let type: Type
-}
-
-struct Type: Codable {
-    let name: String
+    struct `Type`: Codable {
+        let name: String
+    }
 }

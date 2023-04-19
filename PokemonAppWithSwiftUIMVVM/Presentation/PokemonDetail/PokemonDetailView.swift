@@ -8,13 +8,25 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
+    var pokemon: Pokemon
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct PokemonDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonDetailView()
+        Text("No. \(pokemon.id)")
+            .font(.title)
+            .fontWeight(.semibold)
+        AsyncImage(url: URL(string: pokemon.sprites.frontImage)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 200)
+        } placeholder: {
+            ProgressView()
+        }
+        Text(pokemon.name)
+            .font(.body)
+            .fontWeight(.bold)
+        Text("\(pokemon.types[0].type.name)タイプ")
+            .font(.body)
+            .fontWeight(.bold)
     }
 }

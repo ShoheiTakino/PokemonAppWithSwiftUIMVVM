@@ -12,16 +12,28 @@ struct PokemonListView: View {
     @StateObject private var viewModel = PokemonDataViewModel()
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List(viewModel.pokemonList) { pokemon in
-                VStack(alignment: .leading, spacing: 10) {
-                    Image(pokemon.sprites.frontImage)
+                HStack {
+                    AsyncImage(url: URL(string: pokemon.sprites.frontImage)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 40)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    Text(pokemon.name)
+                    NavigationLink(destination: PokemonDetailView(pokemon: pokemon)) {
+                        
+                    }
                 }
             }
             .navigationBarTitle("List")
+            .navigationBarTitleDisplayMode(.inline)
         }.onAppear {
             Task {
-                await viewModel.fetchPokemonList()
+                await viewModel.fetchPokemonData()
             }
         }
     }

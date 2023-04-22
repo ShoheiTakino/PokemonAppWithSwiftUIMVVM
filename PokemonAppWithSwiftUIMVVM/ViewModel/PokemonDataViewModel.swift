@@ -12,10 +12,10 @@ final class PokemonDataViewModel: ObservableObject {
     @Published var pokemonList: [Pokemon] = []
     let apiClient = PokemonApiClient()
     
+    @MainActor
     func fetchPokemonData() async -> [Pokemon]? {
-        DispatchQueue.main.async {
-            self.pokemonList = []
-        }
+        pokemonList = []
+ 
         var urlList: [URL] = []
         urlList = createPokemonUrlList()
         do {
@@ -23,10 +23,6 @@ final class PokemonDataViewModel: ObservableObject {
                 let (data, _) = try await URLSession.shared.data(from: urlList[i])
                 let decoder = JSONDecoder()
                 let pokemon = try decoder.decode(Pokemon.self, from: data)
-                // 以下の処理で、警告は修正できるが時々pokemonの画像を処理できない。
-//                DispatchQueue.main.async {
-//                    self.pokemonList.append(pokemon)
-//                }
                 pokemonList.append(pokemon)
             }
             return pokemonList

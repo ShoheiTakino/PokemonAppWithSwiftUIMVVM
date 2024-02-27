@@ -20,8 +20,8 @@ struct PokemonLazyVGridView: View {
     private let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
-        // navigationStackでは、iOS16以上なので一旦これで
-        NavigationView {
+        // NavigationStackでNavigationTitleと、push遷移を可能にする
+        NavigationStack {
             // スクロールビューにする処理
             ScrollView(.vertical) {
                 // UIKitでいう、CollectionViewとほぼ同義である
@@ -89,8 +89,8 @@ struct PokemonLazyVGridView: View {
     }
 }
 
-struct PokemonLazyVGridView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonLazyVGridView()
-    }
-}
+//struct PokemonLazyVGridView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        PokemonLazyVGridView()
+//    }
+//}

@@ -10,15 +10,15 @@ import SwiftUI
 struct MainTabView: View {
     var body: some View {
         TabView {
-            PokemonListView()
-                .tabItem {
-                    Image(systemName: "rectangle.grid.1x2")
-                    Text("List")
-                }
             PokemonLazyVGridView()
                 .tabItem {
                     Image(systemName: "square.grid.2x2")
                     Text("LazyGrid")
+                }
+            PokemonListView()
+                .tabItem {
+                    Image(systemName: "rectangle.grid.1x2")
+                    Text("List")
                 }
         }
     }

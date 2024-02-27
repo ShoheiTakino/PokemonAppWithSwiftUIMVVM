@@ -10,8 +10,8 @@ import SwiftUI
 struct PokemonItemView: View {
 
     let geometory: GeometryProxy
-    let pokemonEntity: Pokemon
-    let action: (Pokemon) -> Void
+    let pokemonEntity: PokemonEntity
+    let action: (PokemonEntity) -> Void
 
     var body: some View {
         Button {

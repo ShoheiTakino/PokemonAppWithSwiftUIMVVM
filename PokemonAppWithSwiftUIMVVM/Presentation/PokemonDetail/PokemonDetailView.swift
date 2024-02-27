@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
-    var pokemon: Pokemon
+    var pokemon: PokemonEntity
     
     var body: some View {
         Text("No. \(pokemon.id)")

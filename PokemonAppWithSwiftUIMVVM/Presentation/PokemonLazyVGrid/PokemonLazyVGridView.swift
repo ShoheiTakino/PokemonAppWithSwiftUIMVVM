@@ -44,11 +44,6 @@ struct PokemonLazyVGridView: View {
                 }
             }
         }
-        .onAppear {
-            Task {
-                await viewModel.fetchPokemonData()
-            }
-        }
     }
 }
 

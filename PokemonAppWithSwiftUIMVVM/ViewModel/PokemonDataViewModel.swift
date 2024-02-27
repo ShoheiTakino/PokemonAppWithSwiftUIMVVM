@@ -6,16 +6,19 @@
 //
 
 import SwiftUI
-import Combine
 
+@MainActor
 final class PokemonDataViewModel: ObservableObject {
-    @Published var pokemonList: [Pokemon] = []
-    @Published var selectedPokemon: Pokemon? = nil
+    @Published var pokemonList: [PokemonEntity] = []
+    @Published var selectedPokemon: PokemonEntity? = nil
     @Published var isNavigateToDetaileView = false
     let apiClient = PokemonApiClient()
-    
-    @MainActor
-    func fetchPokemonData() async -> [Pokemon]? {
+
+    init() {
+        fetchPokemonListEntity()
+    }
+
+    func fetchPokemonData() async -> [PokemonEntity]? {
         pokemonList = []
  
         var urlList: [URL] = []
@@ -24,7 +27,7 @@ final class PokemonDataViewModel: ObservableObject {
             for i in 0..<urlList.count {
                 let (data, _) = try await URLSession.shared.data(from: urlList[i])
                 let decoder = JSONDecoder()
-                let pokemon = try decoder.decode(Pokemon.self, from: data)
+                let pokemon = try decoder.decode(PokemonEntity.self, from: data)
                 pokemonList.append(pokemon)
             }
             return pokemonList
@@ -44,8 +47,23 @@ final class PokemonDataViewModel: ObservableObject {
         return urlList
     }
 
-    func tappedAtMonstarBallWith(_ pokemon: Pokemon) {
+    func tappedAtMonstarBallWith(_ pokemon: PokemonEntity) {
         selectedPokemon = pokemon
         isNavigateToDetaileView = true
+    }
+}
+
+// MARK: - Pirvate
+
+private extension PokemonDataViewModel {
+
+    func fetchPokemonListEntity() {
+        Task {
+            do {
+
+            } catch {
+
+            }
+        }
     }
 }

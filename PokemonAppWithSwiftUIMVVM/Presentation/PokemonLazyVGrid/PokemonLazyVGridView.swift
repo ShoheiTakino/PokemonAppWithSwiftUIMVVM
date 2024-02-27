@@ -8,72 +8,41 @@
 import SwiftUI
 
 struct PokemonLazyVGridView: View {
-    // @StateObjectは、SwiftUIで使用されるプロパティラッパーでSwiftUIアプリケーションにおける状態管理するらしい
+
+    // @StateObjectでObservebleObjectに準拠したクラスのデータを監視(バインディング)できるようにするための
+    // プロパティラッパー。 @ObservedObjectを使用すると画面の再描画が何度も走るため、@StateObjectの使用を推奨
     @StateObject var viewModel = PokemonDataViewModel()
-    // 長押しでポケモンの色違いを出現させるためのBool
-    @State private var isLongpressed = false
-    // ポケモンボールを2列にするためのGridItem
-    private var columns: [GridItem] = Array(repeating: .init(.flexible(),
-                                                             spacing: 10,
-                                                             alignment: .center),
-                                            count: 2)
-    private let screenWidth = UIScreen.main.bounds.width
-    
+
     var body: some View {
         // NavigationStackでNavigationTitleと、push遷移を可能にする
         NavigationStack {
-            // スクロールビューにする処理
-            ScrollView(.vertical) {
-                // UIKitでいう、CollectionViewとほぼ同義である
-                // CollectionViewでは、Cellを使用するが、LazyVGridでは違うみたい
-                LazyVGrid(columns: columns) {
-                    // リクエストで取得したポケモンの数、GridItemを生成する
-                    ForEach((0..<viewModel.pokemonList.count), id: \.self) { index in
-                        // 各GridItemをタップすると、対応するポケモンの詳細画面に(NavigationControllerでいう)pushする処理
-                        NavigationLink(destination: PokemonDetailView(pokemon: viewModel.pokemonList[index])) {
-                            // 非同期的に画像を読み込み表示するためのビューで他にも色々とオプションがある
-                            AsyncImage(url: URL(string: switchPokemonImage(isNomal: isLongpressed, images: viewModel.pokemonList[index]))) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: screenWidth / 3)
-                                // 画像をロングプレスすると色違いになるが、このモディファイアのせいで、画面遷移できなくなるよ
-//                                    .onLongPressGesture() {
-//                                        isLongpressed.toggle()
-//                                    }
-                                // 画像が表示されるまでは、ProgressView()を表示する
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            // モンスターボールの大きさを決定する処理
-                            .padding()
-                            .frame(width: screenWidth / 2.1, height: 200)
-                            .background {
-                                ZStack {
-                                    // 上半分を赤色にする処理
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(height: screenWidth / 2)
-                                    // 下半分を白にする処理
-                                    Rectangle()
-                                        .fill(Color.white)
-                                        .frame(width: screenWidth / 2.1)
-                                        .offset(y: screenWidth / 4)
-                                }
-                            }
-                            // モンスターボールの枠を黒にする処理
-                            .clipShape(Circle())
-                            .overlay {
-                                Circle()
-                                    .stroke(Color.black, lineWidth: 1)
+            // 画面の大きさを取得するためのツールで、'geometory.size.width'or`geometory.size.height`のような形で画面を取得できる
+            GeometryReader { geometory in
+                // ScrollViewでネストされたコンテンツをスクロールできるようにするためのUIパーツで、`.vertical`でスクロールの向きを指定する
+                ScrollView(.vertical) {
+                    // 指定された要素を縦に並べるためのUIパーツで、画面に表示されるタイミングで初めて画面の作成処理が走る
+                    LazyVGrid(columns: GridItems.columns) {
+                        // 引数に持たせた要素数分、ネストしているアイテムを生成してくれるUIパーツで、
+                        // この場合はpokeminList内のpokemon要素を1つずつ画面に流す役割がある。
+                        ForEach(viewModel.pokemonList) { pokemon in
+                            // 各要素ごとに取得したPokemon型から、ポケモンを表示するためのアイテムを生成する子View
+                            PokemonItemView(geometory: geometory, pokemonEntity: pokemon) { pokeon in
+                                viewModel.tappedAtMonstarBallWith(pokeon)
                             }
                         }
                     }
                 }
             }
+            // ナビゲーションタイトルの表示を行うモディファイア
             .navigationBarTitle("一覧(GridLayout)")
-            // ナビゲーションバーのタイトルの大きさを変更する処理で、NavigationBarItem.TitleDisplayMode
+            // ナビゲーションバーのタイトルの大きさを変更するモディファイア
             .navigationBarTitleDisplayMode(.inline)
+            // 画面遷移を指定できるモディファイア
+            .navigationDestination(isPresented: $viewModel.isNavigateToDetaileView) {
+                if let selectedPokemon = viewModel.selectedPokemon {
+                    PokemonDetailView(pokemon: selectedPokemon)
+                }
+            }
         }
         .onAppear {
             Task {
@@ -81,16 +50,10 @@ struct PokemonLazyVGridView: View {
             }
         }
     }
-    
-    /// ロングプレスで画像を変更する処理
-    private func switchPokemonImage(isNomal: Bool, images: Pokemon) -> String {
-        let imageString = isNomal ? images.sprites.shinyImage : images.sprites.frontImage
-        return imageString
-    }
 }
 
-//struct PokemonLazyVGridView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PokemonLazyVGridView()
-//    }
-//}
+struct PokemonLazyVGridView_Previews: PreviewProvider {
+    static var previews: some View {
+        PokemonLazyVGridView()
+    }
+}

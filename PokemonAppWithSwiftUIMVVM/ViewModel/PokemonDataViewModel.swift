@@ -10,6 +10,8 @@ import Combine
 
 final class PokemonDataViewModel: ObservableObject {
     @Published var pokemonList: [Pokemon] = []
+    @Published var selectedPokemon: Pokemon? = nil
+    @Published var isNavigateToDetaileView = false
     let apiClient = PokemonApiClient()
     
     @MainActor
@@ -40,5 +42,10 @@ final class PokemonDataViewModel: ObservableObject {
             urlList.append(URL(string: "https://pokeapi.co/api/v2/pokemon/\(i)/")!)
         }
         return urlList
+    }
+
+    func tappedAtMonstarBallWith(_ pokemon: Pokemon) {
+        selectedPokemon = pokemon
+        isNavigateToDetaileView = true
     }
 }

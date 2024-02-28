@@ -31,10 +31,6 @@ struct PokemonListView: View {
             }
             .navigationBarTitle("List")
             .navigationBarTitleDisplayMode(.inline)
-        }.onAppear {
-            Task {
-                await viewModel.fetchPokemonData()
-            }
         }
     }
 }

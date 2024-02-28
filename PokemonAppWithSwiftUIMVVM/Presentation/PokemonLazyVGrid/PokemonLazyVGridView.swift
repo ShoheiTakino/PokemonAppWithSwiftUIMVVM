@@ -27,10 +27,18 @@ struct PokemonLazyVGridView: View {
                         ForEach(viewModel.pokemonList) { pokemon in
                             // 各要素ごとに取得したPokemon型から、ポケモンを表示するためのアイテムを生成する子View
                             PokemonItemView(geometory: geometory, pokemonEntity: pokemon) { pokeon in
-                                viewModel.tappedAtMonstarBallWith(pokeon)
+                                viewModel.tappedAtMonsterBallWith(pokeon)
                             }
                         }
                     }
+                }
+                .refreshable {
+                    viewModel.pulledToRefreshed()
+                }
+                .alert(isPresented: $viewModel.isActiveAlert) {
+                    Alert(title: Text(viewModel.alertTitle),
+                          message: Text(viewModel.alertMessage),
+                          dismissButton: .default(Text("オッケー")))
                 }
             }
             // ナビゲーションタイトルの表示を行うモディファイア
@@ -38,15 +46,10 @@ struct PokemonLazyVGridView: View {
             // ナビゲーションバーのタイトルの大きさを変更するモディファイア
             .navigationBarTitleDisplayMode(.inline)
             // 画面遷移を指定できるモディファイア
-            .navigationDestination(isPresented: $viewModel.isNavigateToDetaileView) {
+            .navigationDestination(isPresented: $viewModel.isNavigateToDetailView) {
                 if let selectedPokemon = viewModel.selectedPokemon {
                     PokemonDetailView(pokemon: selectedPokemon)
                 }
-            }
-        }
-        .onAppear {
-            Task {
-                await viewModel.fetchPokemonData()
             }
         }
     }

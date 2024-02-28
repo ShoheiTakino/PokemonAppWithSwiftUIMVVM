@@ -8,9 +8,9 @@
 import Foundation
 
 final class PokemonApiClient: ObservableObject {
-    @Published var pokemonList: [Pokemon] = []
-    
-    func fetchPokemonData() async -> [Pokemon]? {
+    @Published var pokemonList: [PokemonEntity] = []
+
+    func fetchPokemonData() async -> [PokemonEntity]? {
         pokemonList = []
         var urlList: [URL] = []
         urlList = createPokemonUrlList()
@@ -18,7 +18,7 @@ final class PokemonApiClient: ObservableObject {
             for i in 0..<urlList.count {
                 let (data, _) = try await URLSession.shared.data(from: urlList[i])
                 let decoder = JSONDecoder()
-                let pokemon = try decoder.decode(Pokemon.self, from: data)
+                let pokemon = try decoder.decode(PokemonEntity.self, from: data)
                 pokemonList.append(pokemon)
             }
             return pokemonList

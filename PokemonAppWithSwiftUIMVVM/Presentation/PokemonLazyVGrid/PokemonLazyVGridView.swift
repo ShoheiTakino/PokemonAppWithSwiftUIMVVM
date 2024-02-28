@@ -32,6 +32,14 @@ struct PokemonLazyVGridView: View {
                         }
                     }
                 }
+                .refreshable {
+                    viewModel.pulledToRefreshed()
+                }
+                .alert(isPresented: $viewModel.isActiveAlert) {
+                    Alert(title: Text(viewModel.alertTitle),
+                          message: Text(viewModel.alertMessage),
+                          dismissButton: .default(Text("オッケー")))
+                }
             }
             // ナビゲーションタイトルの表示を行うモディファイア
             .navigationBarTitle("一覧(GridLayout)")

@@ -7,8 +7,6 @@
 
 import Foundation
 
-struct Constants {
-    
-    static let pokeAPIUrl = "https://pokeapi.co/api/v2/pokemon//"
-    static let jsonUrl = "https://jsonplaceholder.typicode.com"
+enum Const {
+    static let pokeAPIUrl = "https://pokeapi.co/api/v2/pokemon/"
 }

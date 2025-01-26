@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    
-    @StateObject private var viewModel = PokemonDataViewModel()
-    
+    @StateObject var viewModel: PokemonListViewModel
+
     var body: some View {
         NavigationStack {
-            List(viewModel.pokemonList) { pokemon in
+            List(viewModel.pokemonStore.pokemonList) { pokemon in
                 HStack {
                     AsyncImage(url: URL(string: pokemon.sprites.frontImage)) { image in
                         image
@@ -28,19 +27,26 @@ struct PokemonListView: View {
                         
                     }
                 }
+                .onAppear {
+                    print("ああああ", pokemon.id)
+                }
             }
             .navigationBarTitle("List")
             .navigationBarTitleDisplayMode(.inline)
-        }.onAppear {
-            Task {
-                await viewModel.fetchPokemonData()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) { // 右側に配置
+                    NavigationLink(destination: FavoritePokemonListView(viewModel: .init(pokemonStore: viewModel.pokemonStore, pokemonFavoriteStore: viewModel.pokemonFavoriteStore, pokemonDispatcher: viewModel.pokemonDispatcher))) {
+                        Image(systemName: "plus") // ボタンのアイコン（システムアイコンを使用）
+                            .foregroundColor(.blue)
+                    }
+                }
             }
         }
     }
 }
 
-struct PokemonListView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonListView()
-    }
-}
+//struct PokemonListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        PokemonListView()
+//    }
+//}

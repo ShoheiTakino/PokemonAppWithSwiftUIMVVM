@@ -8,16 +8,14 @@
 import SwiftUI
 
 struct PokemonLazyVGridView: View {
-    // @StateObjectは、SwiftUIで使用されるプロパティラッパーでSwiftUIアプリケーションにおける状態管理するらしい
-    @StateObject var viewModel = PokemonDataViewModel()
-    // 長押しでポケモンの色違いを出現させるためのBool
-    @State private var isLongpressed = false
+    @StateObject var viewModel: PokemonLazyVGridViewModel
+    
     // ポケモンボールを2列にするためのGridItem
-    private var columns: [GridItem] = Array(repeating: .init(.flexible(),
+    var columns: [GridItem] = Array(repeating: .init(.flexible(),
                                                              spacing: 10,
                                                              alignment: .center),
                                             count: 2)
-    private let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
         // NavigationStackでNavigationTitleと、push遷移を可能にする
@@ -28,20 +26,15 @@ struct PokemonLazyVGridView: View {
                 // CollectionViewでは、Cellを使用するが、LazyVGridでは違うみたい
                 LazyVGrid(columns: columns) {
                     // リクエストで取得したポケモンの数、GridItemを生成する
-                    ForEach((0..<viewModel.pokemonList.count), id: \.self) { index in
+                    ForEach(viewModel.pokemonStore.pokemonList) { pokemon in
                         // 各GridItemをタップすると、対応するポケモンの詳細画面に(NavigationControllerでいう)pushする処理
-                        NavigationLink(destination: PokemonDetailView(pokemon: viewModel.pokemonList[index])) {
+                        NavigationLink(destination: PokemonDetailView(pokemon: pokemon)) {
                             // 非同期的に画像を読み込み表示するためのビューで他にも色々とオプションがある
-                            AsyncImage(url: URL(string: switchPokemonImage(isNomal: isLongpressed, images: viewModel.pokemonList[index]))) { image in
+                            AsyncImage(url: URL(string: switchPokemonImage(images: pokemon))) { image in
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(height: screenWidth / 3)
-                                // 画像をロングプレスすると色違いになるが、このモディファイアのせいで、画面遷移できなくなるよ
-//                                    .onLongPressGesture() {
-//                                        isLongpressed.toggle()
-//                                    }
-                                // 画像が表示されるまでは、ProgressView()を表示する
                             } placeholder: {
                                 ProgressView()
                             }
@@ -74,16 +67,22 @@ struct PokemonLazyVGridView: View {
             .navigationBarTitle("一覧(GridLayout)")
             // ナビゲーションバーのタイトルの大きさを変更する処理で、NavigationBarItem.TitleDisplayMode
             .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            Task {
-                await viewModel.fetchPokemonData()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) { // 右側に配置
+                    NavigationLink(destination: FavoritePokemonListView(viewModel: .init(pokemonStore: viewModel.pokemonStore, pokemonFavoriteStore: viewModel.pokemonFavoriteStore, pokemonDispatcher: viewModel.pokemonDispatcher))) {
+                        Image(systemName: "plus") // ボタンのアイコン（システムアイコンを使用）
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
+            .onAppear {
+                viewModel.onAppear()
             }
         }
     }
     
     /// ロングプレスで画像を変更する処理
-    private func switchPokemonImage(isNomal: Bool, images: Pokemon) -> String {
+    private func switchPokemonImage(isNomal: Bool = false, images: Pokemon) -> String {
         let imageString = isNomal ? images.sprites.shinyImage : images.sprites.frontImage
         return imageString
     }

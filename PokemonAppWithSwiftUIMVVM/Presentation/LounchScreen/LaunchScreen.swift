@@ -26,7 +26,7 @@ struct LaunchScreen: View {
                 }
             }
         } else {
-            MainTabView()
+            MainTabView(mainTabViewModel: MainTabViewModel())
         }
     }
 }

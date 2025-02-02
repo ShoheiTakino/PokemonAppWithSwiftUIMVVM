@@ -1,7 +1,10 @@
 import Foundation
 
-final class LaunchScreenViewModel: ObservableObject {
-    // Store初期化
-    let store = PokemonFavoriteStore()
-    lazy var dispatcher = PokemonFavoriteDispatcher(pokemonFavoriteStore: store)
+final class LaunchScreenViewModel {
+    let mainTabViewModel: MainTabViewModel
+    init(
+        mainTabViewModel: MainTabViewModel = MainTabViewModel()
+    ) {
+        self.mainTabViewModel = mainTabViewModel
+    }
 }

@@ -1,13 +1,7 @@
-//
-//  LaunchScreen.swift
-//  PokemonAppWithSwiftUIMVVM
-//
-//  Created by 滝野翔平 on 2023/04/10.
-//
-
 import SwiftUI
 
-struct LaunchScreen: View {
+struct LaunchScreenView: View {
+    var viewModel: LaunchScreenViewModel
     @State private var isLoading = true
 
     var body: some View {
@@ -17,22 +11,16 @@ struct LaunchScreen: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             }
-            .edgesIgnoringSafeArea(.all)
+            .ignoresSafeArea()
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
                         isLoading = false
                     }
                 }
             }
         } else {
-            MainTabView(mainTabViewModel: MainTabViewModel())
+            MainTabView(mainTabViewModel: viewModel.mainTabViewModel)
         }
-    }
-}
-
-struct LaunchScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        LaunchScreen()
     }
 }

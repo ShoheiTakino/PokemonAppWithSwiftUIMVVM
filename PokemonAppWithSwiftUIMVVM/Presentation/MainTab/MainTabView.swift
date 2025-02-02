@@ -1,23 +1,16 @@
-//
-//  MainTabView.swift
-//  PokemonAppWithSwiftUIMVVM
-//
-//  Created by 滝野翔平 on 2023/04/05.
-//
-
 import SwiftUI
 
 struct MainTabView: View {
 
-    @StateObject var mainTabViewModel: MainTabViewModel
+    var mainTabViewModel: MainTabViewModel
 
     var body: some View {
         TabView {
             PokemonLazyVGridView(
                 viewModel: PokemonLazyVGridViewModel(
                     pokemonStore: mainTabViewModel.pokemonStore,
-                    pokemonFavoriteStore: mainTabViewModel.favoritePokemonStore,
-                    pokemonDispatcher: mainTabViewModel.dispatcher)
+                    pokemonDispatcher: mainTabViewModel.dispatcher
+                )
             )
             .tabItem {
                 Image(systemName: "square.grid.2x2")
@@ -26,11 +19,11 @@ struct MainTabView: View {
             PokemonListView(
                 viewModel: PokemonListViewModel(
                     pokemonStore: mainTabViewModel.pokemonStore,
-                    pokemonFavoriteStore: mainTabViewModel.favoritePokemonStore,
-                    pokemonDispatcher: mainTabViewModel.dispatcher)
+                    pokemonDispatcher: mainTabViewModel.dispatcher
+                )
             )
             .tabItem {
-                Image(systemName: "rectangle.grid.1x2")
+                Image(systemName: "square.grid.3x3")
                 Text("List")
             }
         }

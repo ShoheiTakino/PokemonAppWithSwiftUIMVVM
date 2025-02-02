@@ -1,20 +1,23 @@
 import SwiftUI
 
-@MainActor
-final class MainTabViewModel: ObservableObject {
-    var favoritePokemonStore = PokemonFavoriteStore()
-    var pokemonStore = PokemonStore()
+final class MainTabViewModel {
+    let pokemonStore: PokemonStore
     lazy var dispatcher = PokemonDispatcher(
-        pokemonStore: pokemonStore,
-        pokemonFavoriteStore: favoritePokemonStore
+        pokemonStore: pokemonStore
     )
 
     var task: Task<Void, Never>?
 
-    init() {
-        task = Task { [weak self] in
+    init(
+        pokemonStore: PokemonStore = PokemonStore(),
+        task: Task<Void, Never>? = nil
+    ) {
+        self.pokemonStore = pokemonStore
+        self.task = Task { [weak self] in
             do {
-//                try? await self?.dispatcher.fetchPokemons()
+                try await self?.dispatcher.fetchPokemons()
+            } catch {
+                print(error.localizedDescription)
             }
         }
     }

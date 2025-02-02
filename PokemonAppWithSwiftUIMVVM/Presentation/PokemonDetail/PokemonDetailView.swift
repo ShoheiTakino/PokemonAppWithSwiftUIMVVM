@@ -1,32 +1,37 @@
-//
-//  PokemonDetailView.swift
-//  PokemonAppWithSwiftUIMVVM
-//
-//  Created by 滝野翔平 on 2023/04/05.
-//
-
 import SwiftUI
 
 struct PokemonDetailView: View {
-    var pokemon: Pokemon
-    
+
+    var viewModel: PokemonDetailViewModel
+
     var body: some View {
-        Text("No. \(pokemon.id)")
-            .font(.title)
-            .fontWeight(.semibold)
-        AsyncImage(url: URL(string: pokemon.sprites.frontImage)) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 200)
-        } placeholder: {
-            ProgressView()
+        NavigationView {
+            VStack(alignment: .center) {
+                Text("No. \(viewModel.pokemon.id)")
+                    .font(.title)
+                    .fontWeight(.semibold)
+                CacheAsyncImage(url: viewModel.pokemon.imageUrl)
+                        .frame(height: 200)
+                Text(viewModel.pokemon.name)
+                    .font(.body)
+                    .fontWeight(.bold)
+                Text("\(viewModel.pokemon.types.first ?? "謎")タイプ")
+                    .font(.body)
+                    .fontWeight(.bold)
+            }
         }
-        Text(pokemon.name)
-            .font(.body)
-            .fontWeight(.bold)
-        Text("\(pokemon.types[0].type.name)タイプ")
-            .font(.body)
-            .fontWeight(.bold)
+        .navigationBarTitle("ポケモン詳細")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                FavoriteButtonView(
+                    isFavorite: viewModel.pokemon.isFavorite,
+                    onTapFavoriteButton: {
+                        viewModel.onTapFavorite()
+                    }
+                )
+            }
+        }
+        .toolbar(.hidden, for: .tabBar)
     }
 }

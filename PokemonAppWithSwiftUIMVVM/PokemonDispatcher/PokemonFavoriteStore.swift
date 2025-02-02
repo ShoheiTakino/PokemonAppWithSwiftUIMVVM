@@ -1,12 +1,31 @@
 import Foundation
 
-actor PokemonFavoriteStore {
+final class PokemonFavoriteStore: ObservableObject {
     var favoriteIds: [Int] = []
+
+    @Published
+    var favoritePokemons: [Pokemon] = []
 
     private let userDefaults = UserDefaults.standard
 
     private enum Const {
         static let userDefaultKey = "favorite_pokemon_ids"
+    }
+
+    @MainActor
+    func append(_ favoritePokemon: Pokemon) {
+        favoritePokemons.insert(favoritePokemon, at: .zero)
+    }
+
+    // お気に入りに追加・削除
+    func toggleFavorite(_ pokemon: Pokemon) {
+        if let index = favoritePokemons.firstIndex(where: { $0.id == pokemon.id }) {
+            if favoritePokemons[index].isFavorite {
+                favoritePokemons[index].isFavorite = false
+            } else {
+                favoritePokemons[index].isFavorite = true
+            }
+        }
     }
 
     func appendFavoriteId(_ id: Int) {

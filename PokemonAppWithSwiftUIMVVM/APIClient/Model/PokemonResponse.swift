@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Pokemon: Decodable, Identifiable, Sendable {
+struct PokemonResponse: Decodable, Identifiable, Sendable {
     let name: String
     let id: Int
     let sprites: Images
     let types: [Types]
-    
+
     struct Images: Codable {
         let frontImage: String
         let shinyImage: String

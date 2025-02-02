@@ -1,95 +1,68 @@
-//
-//  PokemonLazyVGridView.swift
-//  PokemonAppWithSwiftUIMVVM
-//
-//  Created by 滝野翔平 on 2023/04/05.
-//
-
 import SwiftUI
 
 struct PokemonLazyVGridView: View {
-    @StateObject var viewModel: PokemonLazyVGridViewModel
-    
-    // ポケモンボールを2列にするためのGridItem
-    var columns: [GridItem] = Array(repeating: .init(.flexible(),
-                                                             spacing: 10,
-                                                             alignment: .center),
-                                            count: 2)
+    var viewModel: PokemonLazyVGridViewModel
+
+    private enum Const {
+        static let columns: [GridItem] = Array(
+            repeating: .init(
+                .flexible(),
+                spacing: 10,
+                alignment: .center
+            ),
+            count: 2
+        )
+    }
     let screenWidth = UIScreen.main.bounds.width
-    
+
     var body: some View {
-        // NavigationStackでNavigationTitleと、push遷移を可能にする
         NavigationStack {
-            // スクロールビューにする処理
             ScrollView(.vertical) {
-                // UIKitでいう、CollectionViewとほぼ同義である
-                // CollectionViewでは、Cellを使用するが、LazyVGridでは違うみたい
-                LazyVGrid(columns: columns) {
-                    // リクエストで取得したポケモンの数、GridItemを生成する
-                    ForEach(viewModel.pokemonStore.pokemonList) { pokemon in
-                        // 各GridItemをタップすると、対応するポケモンの詳細画面に(NavigationControllerでいう)pushする処理
-                        NavigationLink(destination: PokemonDetailView(pokemon: pokemon)) {
-                            // 非同期的に画像を読み込み表示するためのビューで他にも色々とオプションがある
-                            AsyncImage(url: URL(string: switchPokemonImage(images: pokemon))) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: screenWidth / 3)
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            // モンスターボールの大きさを決定する処理
-                            .padding()
-                            .frame(width: screenWidth / 2.1, height: 200)
-                            .background {
-                                ZStack {
-                                    // 上半分を赤色にする処理
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(height: screenWidth / 2)
-                                    // 下半分を白にする処理
-                                    Rectangle()
-                                        .fill(Color.white)
-                                        .frame(width: screenWidth / 2.1)
-                                        .offset(y: screenWidth / 4)
+                LazyVGrid(columns: Const.columns) {
+                    ForEach(viewModel.pokemons) { pokemon in
+                        NavigationLink(destination: PokemonDetailView(viewModel: .init(pokemonStore: viewModel.pokemonStore, pokemonDispatcher: viewModel.pokemonDispatcher, pokemon: pokemon))) {
+                            CacheAsyncImage(url: pokemon.imageUrl)
+                                .frame(height: screenWidth / 3)
+                                .padding()
+                                .frame(width: screenWidth / 2.1, height: 200)
+                                .background {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(height: screenWidth / 2)
+                                        Rectangle()
+                                            .fill(Color.white)
+                                            .frame(width: screenWidth / 2.1)
+                                            .offset(y: screenWidth / 4)
+                                    }
                                 }
-                            }
-                            // モンスターボールの枠を黒にする処理
-                            .clipShape(Circle())
-                            .overlay {
-                                Circle()
-                                    .stroke(Color.black, lineWidth: 1)
-                            }
+                                .clipShape(Circle())
+                                .overlay {
+                                    Circle()
+                                        .stroke(Color.black, lineWidth: 1)
+                                }
+                        }
+                        .overlay(alignment: .topTrailing) {
+                            FavoriteButtonView(
+                                isFavorite: pokemon.isFavorite,
+                                onTapFavoriteButton: {
+                                    viewModel.onTapFavorite(pokemon)
+                                }
+                            )
                         }
                     }
                 }
             }
             .navigationBarTitle("一覧(GridLayout)")
-            // ナビゲーションバーのタイトルの大きさを変更する処理で、NavigationBarItem.TitleDisplayMode
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) { // 右側に配置
-                    NavigationLink(destination: FavoritePokemonListView(viewModel: .init(pokemonStore: viewModel.pokemonStore, pokemonFavoriteStore: viewModel.pokemonFavoriteStore, pokemonDispatcher: viewModel.pokemonDispatcher))) {
-                        Image(systemName: "plus") // ボタンのアイコン（システムアイコンを使用）
-                            .foregroundColor(.blue)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: FavoritePokemonListView(viewModel: .init(pokemonStore: viewModel.pokemonStore, pokemonDispatcher: viewModel.pokemonDispatcher))) {
+                        Image(systemName: "rectangle.grid.1x2")
+                            .foregroundColor(.primary)
                     }
                 }
             }
-            .onAppear {
-                viewModel.onAppear()
-            }
         }
     }
-    
-    /// ロングプレスで画像を変更する処理
-    private func switchPokemonImage(isNomal: Bool = false, images: Pokemon) -> String {
-        let imageString = isNomal ? images.sprites.shinyImage : images.sprites.frontImage
-        return imageString
-    }
 }
-
-//struct PokemonLazyVGridView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PokemonLazyVGridView()
-//    }
-//}

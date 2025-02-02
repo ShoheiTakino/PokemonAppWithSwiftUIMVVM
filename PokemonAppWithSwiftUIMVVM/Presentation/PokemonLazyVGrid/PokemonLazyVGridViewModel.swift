@@ -1,52 +1,36 @@
 import Foundation
+import Combine
+import Observation
 
-final class PokemonLazyVGridViewModel: ObservableObject {
+@Observable
+final class PokemonLazyVGridViewModel {
 
-    @Published
-    var pokemonStore: PokemonStore
-    let pokemonFavoriteStore: PokemonFavoriteStore
+    let pokemonStore: PokemonStore
     let pokemonDispatcher: PokemonDispatcher
 
-    @Published
-    var pokemons: [Pokemon] = []
+    var pokemons: [PokemonEntity] = []
+    private var cancellables: Set<AnyCancellable> = Set()
 
     init(
         pokemonStore: PokemonStore,
-        pokemonFavoriteStore: PokemonFavoriteStore,
         pokemonDispatcher: PokemonDispatcher
     ) {
         self.pokemonStore = pokemonStore
-        self.pokemonFavoriteStore = pokemonFavoriteStore
         self.pokemonDispatcher = pokemonDispatcher
+
+        // pokemonStore の変更を監視
+        self.pokemonStore.$pokemonList
+            .receive(on: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] updatedList in
+                guard let self = self else { return }
+                self.pokemons = updatedList
+            }
+            .store(in: &cancellables)
     }
 
-    func onAppear() {
-        Task {
-            do {
-                try? await fetchPokemons()
-            }
-        }
-    }
 
-    func fetchPokemons() async throws {
-        // Taskの利用方法問題ないか確認
-        try await withThrowingTaskGroup(of: Pokemon.self) { pokemonTaskGroup in
-            let pokemonIdsRange = 1...150
-            for id in pokemonIdsRange {
-                pokemonTaskGroup.addTask { [weak self] in
-                    guard let self else { throw ErrorType.unknownError }
-                    return try await pokemonDispatcher.fetchPokemonsA(id: id)
-                }
-            }
-
-            for try await pokemon in pokemonTaskGroup {
-                await MainActor.run {
-                    pokemons.append(pokemon)
-                }
-            }
-            await MainActor.run {
-                pokemons.sort(by: { $0.id < $1.id })
-            }
-        }
+    func onTapFavorite(_ pokemon: PokemonEntity) {
+        pokemonDispatcher.updateFavorite(pokemon)
     }
 }

@@ -2,15 +2,15 @@ import Foundation
 
 struct PokemonDispatcher {
 
-    let pokemonFavoriteStore: PokemonFavoriteStore
-    let pokemonStore: PokemonStore
+    private let pokemonStore: PokemonStore
+    private let pokemonFetcher: PokemonFetcher
 
     init(
         pokemonStore: PokemonStore,
-        pokemonFavoriteStore: PokemonFavoriteStore
+        pokemonFetcher: PokemonFetcher = PokemonFetcher()
     ) {
         self.pokemonStore = pokemonStore
-        self.pokemonFavoriteStore = pokemonFavoriteStore
+        self.pokemonFetcher = pokemonFetcher
     }
 }
 
@@ -18,31 +18,23 @@ struct PokemonDispatcher {
 extension PokemonDispatcher {
 
     func fetchPokemons() async throws {
-        let pokemonFetcher = PokemonFetcher()
-
         // Taskの利用方法問題ないか確認
-        try await withThrowingTaskGroup(of: Pokemon.self) { pokemonTaskGroup in
-            let pokemonIdsRange = 1...150
+        try await withThrowingTaskGroup(of: PokemonEntity.self) { pokemonTaskGroup in
+            let pokemonIdsRange = 1...151
             for id in pokemonIdsRange {
                 pokemonTaskGroup.addTask {
-                    try await pokemonFetcher.fetchPokemonDataFrom(id)
+                    let pokemonResponse = try await pokemonFetcher.fetchPokemonDataFrom(id)
+                    return try PokemonEntity.init(pokemonResponse)
                 }
             }
 
             for try await pokemon in pokemonTaskGroup {
-                await MainActor.run {
-                    pokemonStore.appendPokemon(pokemon)
-                }
+                pokemonStore.append(pokemon)
             }
         }
     }
 
-    func fetchPokemonsA(id: Int) async throws -> Pokemon {
-        let pokemonFetcher = PokemonFetcher()
-        return try await pokemonFetcher.fetchPokemonDataFrom(id)
+    func updateFavorite(_ pokemon: PokemonEntity) {
+        pokemonStore.toggleFavorite(pokemon)
     }
-}
-
-enum ErrorType: Error {
-    case unknownError
 }
